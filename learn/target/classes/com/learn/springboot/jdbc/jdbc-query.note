@@ -1,0 +1,405 @@
+使用JdbcTemplate进行查询的方法
+	
+	@SuppressWarnings("unchecked")  
+    private static void query9(JdbcTemplate jt) {  
+          
+        List list1=new ArrayList();  
+  
+        String sql = "select * from userinfo where id<?";  
+          
+        list1=jt.execute(sql,new PreparedStatementCallback() {  
+  
+            public Object doInPreparedStatement(PreparedStatement ps) throws SQLException, DataAccessException {  
+                  
+                ps.setInt(1, 20);  
+                  
+                ResultSet rs=ps.executeQuery();  
+                  
+                Userinfo userinfo = new Userinfo();  
+                  
+                List list=new ArrayList();  
+  
+                while (rs.next()) {  
+                    userinfo.setId(rs.getInt("id"));  
+                    userinfo.setUsername(rs.getString("username"));  
+                    userinfo.setPassword(rs.getString("password"));  
+                    userinfo.setCrateDate(rs.getDate("createDate"));  
+                    list.add(userinfo);  
+                }  
+                  
+                return list;  
+            }  
+        });  
+  
+        System.out.println(list1.size());  
+    }  
+  
+    /** 
+     * queryForInt(String sql) 
+     *  
+     * queryFor**(String sql) 
+     *  
+     * @param jt 
+     */  
+  
+    private static void query8(JdbcTemplate jt) {  
+        int i = jt.queryForInt("select count(*) from userinfo");  
+        System.out.println(i);  
+  
+    }  
+  
+    /** 
+     * query(String sql, PreparedStatementSetter pss, ResultSetExtractor<T> rse) 
+     *  
+     * query(String sql, PreparedStatementSetter pss, RowCallbackHandler rch) 
+     *  
+     * query(String sql, PreparedStatementSetter pss, RowMapper<T> rowMapper) 
+     *  
+     * @param jt 
+     */  
+  
+    @SuppressWarnings("unchecked")  
+    private static void query7(JdbcTemplate jt) {  
+        List list1 = new ArrayList();  
+  
+        String sql = "select * from userinfo where id<? and username=?";  
+  
+        list1 = jt.query(sql, new PreparedStatementSetter() {  
+  
+            public void setValues(PreparedStatement ps) throws SQLException {  
+                ps.setInt(1, 20);  
+                ps.setString(2, "user4");  
+  
+            }  
+  
+        }, new ResultSetExtractor() {  
+  
+            public Object extractData(ResultSet rs) throws SQLException, DataAccessException {  
+                List list = new ArrayList();  
+  
+                while (rs.next()) {  
+  
+                    Userinfo u = new Userinfo();  
+  
+                    u.setId(rs.getInt("id"));  
+  
+                    u.setUsername(rs.getString("username"));  
+  
+                    u.setPassword(rs.getString("password"));  
+  
+                    u.setCrateDate(rs.getDate("createDate"));  
+  
+                    list.add(u);  
+  
+                }  
+  
+                return list;  
+            }  
+        });  
+  
+        System.out.println(list1.size());  
+    }  
+  
+    /** 
+     * query(String sql, Object[] args, ResultSetExtractor<T> rse) query(String 
+     * sql, Object[] args, int[] argTypes, ResultSetExtractor<T> rse) 
+     *  
+     * query(String sql, Object[] args, RowMapper<T> rowMapper) query(String 
+     * sql, Object[] args, int[] argTypes, RowMapper<T> rowMapper) 
+     *  
+     * query(String sql, Object[] args, RowCallbackHandler rch) query(String 
+     * sql, Object[] args, int[] argTypes, RowCallbackHandler rch) 
+     *  
+     * argTypes:java.sql.Type中有定义 
+     *  
+     * @param jt 
+     */  
+  
+    @SuppressWarnings("unchecked")  
+    private static void query6(JdbcTemplate jt) {  
+  
+        List list1 = new ArrayList();  
+  
+        String sql = "select * from userinfo where id<? and username=?";  
+  
+        list1 = jt.query(sql, new Object[] { 15, "user4" }, new ResultSetExtractor() {  
+  
+            public Object extractData(ResultSet rs) throws SQLException, DataAccessException {  
+  
+                List list = new ArrayList();  
+  
+                while (rs.next()) {  
+  
+                    Userinfo u = new Userinfo();  
+  
+                    u.setId(rs.getInt("id"));  
+  
+                    u.setUsername(rs.getString("username"));  
+  
+                    u.setPassword(rs.getString("password"));  
+  
+                    u.setCrateDate(rs.getDate("createDate"));  
+  
+                    list.add(u);  
+  
+                }  
+  
+                return list;  
+            }  
+        });  
+  
+        System.out.println(list1.size());  
+  
+    }  
+  
+    /** 
+     * query(final String sql, final ResultSetExtractor<T> rse) query(String 
+     * sql, RowCallbackHandler rch) query(String sql, RowMapper<T> rowMapper) 
+     *  
+     * @param jt 
+     */  
+  
+    @SuppressWarnings("unchecked")  
+    private static void query5(JdbcTemplate jt) {  
+  
+        List list1 = new ArrayList();  
+  
+        String sql = "select * from userinfo where id<20";  
+  
+        list1 = jt.query(sql, new ResultSetExtractor() {  
+  
+            public Object extractData(ResultSet rs) throws SQLException, DataAccessException {  
+  
+                List list = new ArrayList();  
+  
+                while (rs.next()) {  
+  
+                    Userinfo u = new Userinfo();  
+  
+                    u.setId(rs.getInt("id"));  
+  
+                    u.setUsername(rs.getString("username"));  
+  
+                    u.setPassword(rs.getString("password"));  
+  
+                    u.setCrateDate(rs.getDate("createDate"));  
+  
+                    list.add(u);  
+  
+                }  
+  
+                return list;  
+            }  
+  
+        });  
+  
+        System.out.println(((Userinfo) list1.get(4)).getUsername());  
+  
+    }  
+  
+    /** 
+     * query(PreparedStatementCreator psc, RowMapper<T> rowMapper) 多次调用RowMapper 
+     *  
+     * @param jt 
+     */  
+  
+    static int i = 0;  
+  
+    static int j = 0;  
+  
+    static int k = 0;  
+  
+    @SuppressWarnings("unchecked")  
+    public static void query4(JdbcTemplate jt) {  
+  
+        List list1 = new ArrayList();  
+  
+        list1 = jt.query(new PreparedStatementCreator() {  
+  
+            public PreparedStatement createPreparedStatement(Connection con) throws SQLException {  
+  
+                System.out.println("i=" + (++i));  
+  
+                String sql = "select * from userinfo where id<?";  
+  
+                PreparedStatement ps = con.prepareStatement(sql);  
+  
+                ps.setInt(1, 20);  
+  
+                return ps;  
+            }  
+        }, new RowMapper() {  
+  
+            public Object mapRow(ResultSet rs, int rowNum) throws SQLException {  
+  
+                System.out.println("j=" + (++j));  
+  
+                Userinfo u = new Userinfo();  
+  
+                u.setId(rs.getInt("id"));  
+  
+                u.setUsername(rs.getString("username"));  
+  
+                u.setPassword(rs.getString("password"));  
+  
+                u.setCrateDate(rs.getDate("createDate"));  
+  
+                return u;  
+            }  
+        });  
+  
+        System.out.println(list1.size());  
+  
+    }  
+  
+    /** 
+     * query(PreparedStatementCreator psc, RowCallbackHandler rch) 
+     *  
+     * @param jt 
+     */  
+  
+    @SuppressWarnings("unchecked")  
+    public static void query3(JdbcTemplate jt) {  
+  
+        final List list = new ArrayList();  
+  
+        jt.query(new PreparedStatementCreator() {  
+  
+            public PreparedStatement createPreparedStatement(Connection con) throws SQLException {  
+  
+                System.out.println("i=" + (++i));  
+  
+                String sql = "select * from userinfo where id<?";  
+  
+                PreparedStatement ps = con.prepareStatement(sql);  
+  
+                ps.setInt(1, 20);  
+  
+                return ps;  
+            }  
+        }, new RowCallbackHandler() {  
+  
+            public void processRow(ResultSet rs) throws SQLException {  
+  
+                System.out.println("j=" + (++j));  
+                while (rs.next()) {  
+  
+                    Userinfo u = new Userinfo();  
+  
+                    u.setId(rs.getInt("id"));  
+  
+                    u.setUsername(rs.getString("username"));  
+  
+                    u.setPassword(rs.getString("password"));  
+  
+                    u.setCrateDate(rs.getDate("createDate"));  
+  
+                    list.add(u);  
+  
+                }  
+  
+            }  
+        });  
+  
+        System.out.println(list.size());  
+    }  
+  
+    /** 
+     * query(PreparedStatementCreator psc, ResultSetExtractor<T> rse) 
+     *  
+     * @param jt 
+     */  
+    @SuppressWarnings("unchecked")  
+    public static void query2(JdbcTemplate jt) {  
+        Userinfo u = new Userinfo();  
+        u = jt.query(new PreparedStatementCreator() {  
+  
+            public PreparedStatement createPreparedStatement(Connection con) throws SQLException {  
+  
+                System.out.println("i=" + (++i));  
+  
+                String sql = "select * from userinfo where id=?";  
+  
+                PreparedStatement ps = con.prepareStatement(sql);  
+  
+                ps.setInt(1, 20000);  
+  
+                return ps;  
+            }  
+        }, new ResultSetExtractor() {  
+  
+            public Object extractData(ResultSet rs) throws SQLException, DataAccessException {  
+  
+                System.out.println("j=" + (++j));  
+  
+                Userinfo userinfo = new Userinfo();  
+  
+                while (rs.next()) {  
+  
+                    userinfo.setId(rs.getInt("id"));  
+  
+                    userinfo.setUsername(rs.getString("username"));  
+  
+                    userinfo.setPassword(rs.getString("password"));  
+  
+                    userinfo.setCrateDate(rs.getDate("createDate"));  
+  
+                }  
+  
+                return userinfo;  
+            }  
+        });  
+        System.out.println(u.getCrateDate());  
+    }  
+  
+    /** 
+     * query( PreparedStatementCreator psc, final PreparedStatementSetter pss, 
+     * final ResultSetExtractor<T> rse) 
+     *  
+     * @param jt 
+     */  
+    @SuppressWarnings("unchecked")  
+    public static void query1(JdbcTemplate jt) {  
+        Userinfo u = new Userinfo();  
+  
+        u = jt.query(new PreparedStatementCreator() {  
+  
+            public PreparedStatement createPreparedStatement(Connection con) throws SQLException {  
+  
+                System.out.println("i=" + (++i));  
+  
+                String sql = "select * from userinfo where id=?";  
+  
+                return con.prepareStatement(sql);  
+            }  
+        }, new PreparedStatementSetter() {  
+  
+            public void setValues(PreparedStatement ps) throws SQLException {  
+  
+                System.out.println("j=" + (++j));  
+  
+                ps.setInt(1, 20000);  
+  
+            }  
+        }, new ResultSetExtractor() {  
+  
+            public Object extractData(ResultSet rs) throws SQLException, DataAccessException {  
+  
+                System.out.println("k=" + (++k));  
+  
+                Userinfo userinfo = new Userinfo();  
+  
+                while (rs.next()) {  
+                    userinfo.setId(rs.getInt("id"));  
+                    userinfo.setUsername(rs.getString("username"));  
+                    userinfo.setPassword(rs.getString("password"));  
+                    userinfo.setCrateDate(rs.getDate("createDate"));  
+  
+                }  
+  
+                return userinfo;  
+            }  
+        });  
+  
+        System.out.println(u.getCrateDate());  
+    }  
