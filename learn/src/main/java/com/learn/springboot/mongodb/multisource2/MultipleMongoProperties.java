@@ -11,14 +11,14 @@ public class MultipleMongoProperties {
 	
     @Bean(name="statisMongoProperties")
     @Primary
-	@ConfigurationProperties(prefix = "spring.data.mongodb.statis")
+	@ConfigurationProperties(prefix = "spring.data.mongodb.multiple2")
     public MongoProperties statisMongoProperties() {
         System.out.println("-------------------- statisMongoProperties init ---------------------");
         return new MongoProperties();
     }
 
     @Bean(name="listMongoProperties")
-    @ConfigurationProperties(prefix="spring.data.mongodb.list")
+    @ConfigurationProperties(prefix="spring.data.mongodb.multiple1")
     public MongoProperties listMongoProperties() {
         System.out.println("-------------------- listMongoProperties init ---------------------");
         return new MongoProperties();
